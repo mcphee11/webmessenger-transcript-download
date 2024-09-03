@@ -8,6 +8,8 @@ Once you download the transcript you will get a PDF like the below screen shot:
 
 ![](/docs/images/pdf.png?raw=true)
 
+This example uses [PDF-Lib](https://pdf-lib.js.org/) for the creation of the PDF file. For details on this package please reference its own documentation.
+
 ### types currently supported
 
 Not ALL object types are supported yet fully the below items are supported as well as in what state:
@@ -40,9 +42,18 @@ const gc_hexColor = '#000000'
 const gc_iconColor = 'white'
 </script>
 
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="https://unpkg.com/@pdf-lib/fontkit/dist/fontkit.umd.js"></script>
+
 <script src=./genesysTranscript.min.js></script>
 ```
 
 Ensure that this is `BELOW` the default Genesys Cloud WebMessenger deployment snippet as the `Genesys` SDK that is used int his file needs to be loaded first. If you do run into load issues you can always add a `defer` to this so its forced to load later.
 
 file that is in the repo, while you can use the .js version I have created a .min.js version to compress and mangle the code for prod deployment. I use [terser](https://terser.org/) to do this there are many other packages out there but if you do your own edits you can then use terser to create your own .min version of your own file if you did change the code. Or you can just use your raw .js version of the file.
+
+### NOTE:
+
+For PDF-Lib in the above snippet I have used the public `latest` version for the CDN, in a production install I recommend following there advice and selecting a specific version incase there are breaking changes in their package in the future. As per [here](https://pdf-lib.js.org/#umd-module)
+
+![](/docs/images/pdf_lib_versions.png?raw=true)
