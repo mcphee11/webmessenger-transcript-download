@@ -5,8 +5,15 @@ let gc_token
 let gc_icon
 
 Genesys('subscribe', 'Launcher.ready', function () {
-  gc_token = JSON.parse(localStorage.getItem(`_${gc_deploymentId}:actmu`)).value
-  displayButton()
+  if (JSON.parse(localStorage.getItem(`_${gc_deploymentId}:actmu`))) {
+    gc_token = JSON.parse(localStorage.getItem(`_${gc_deploymentId}:actmu`)).value
+    displayButton()
+  } else {
+    setTimeout(function () {
+      gc_token = JSON.parse(localStorage.getItem(`_${gc_deploymentId}:actmu`)).value
+      displayButton()
+    }, 2000)
+  }
 })
 
 function setupWSS() {
@@ -73,6 +80,13 @@ async function createPdf(history) {
   let yPosition = 3
 
   //loop through history array, reverse for public API
+  if (history.total === 0) {
+    console.warn('There are no messages currently')
+    loadingOff()
+    showError()
+    return
+  }
+
   for (const msg of history.entities.reverse()) {
     let image
     let imageScale = 1.0
@@ -340,4 +354,19 @@ function loadingOn() {
 function loadingOff() {
   let btn = document.getElementById('gc_downloadButton')
   gc_iconColor == 'white' ? (btn.innerHTML = downLoadSvgWhite) : (btn.innerHTML = downLoadSvgBlack)
+}
+
+function showError() {
+  Genesys(
+    'command',
+    'Toaster.open',
+    {
+      title: 'Error',
+      body: 'Sorry but there is no conversation currently to download. Please have a conversation first before trying to download the transcript.',
+    },
+    function () {},
+    function (error) {
+      console.log('There was an error running the Toaster.open command:', error)
+    }
+  )
 }
