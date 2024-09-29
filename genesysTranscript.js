@@ -135,8 +135,16 @@ async function createPdf(history) {
         page = pdfDoc.addPage()
         yPosition = 3
       }
-      const next = customerImage(page, ubuntuFont, image, imageScale, yPosition, width, height, fontSize, msg.channel.time)
-      yPosition = next
+      if (msg.direction == 'Outbound') {
+        // Genesys
+        const next = agentImage(page, ubuntuFont, image, imageScale, yPosition, width, height, fontSize, msg.channel.time)
+        yPosition = next
+      }
+      if (msg.direction == 'Inbound') {
+        // Customer
+        const next = customerImage(page, ubuntuFont, image, imageScale, yPosition, width, height, fontSize, msg.channel.time)
+        yPosition = next
+      }
     }
   }
 
@@ -186,7 +194,7 @@ function customerText(page, font, text, start, width, height, fontSize, time) {
   page.drawText(text, opts)
   let forth = third + newPage.rec.lineCount
 
-  page.drawText(time, {
+  page.drawText(new Date(time).toLocaleString(), {
     x: 20,
     y: height - forth * fontSize,
     size: 8,
@@ -217,7 +225,7 @@ function customerImage(page, font, image, imageScale, start, width, height, font
   })
   let forth = third + image.scale(imageScale).height / fontSize + 1
 
-  page.drawText(time, {
+  page.drawText(new Date(time).toLocaleString(), {
     x: 20,
     y: height - forth * fontSize,
     size: 8,
@@ -262,8 +270,39 @@ function agentText(page, font, text, start, width, height, fontSize, time) {
   page.drawText(text, opts)
   let forth = third + newPage.rec.lineCount
 
-  page.drawText(time, {
-    x: width - 120,
+  page.drawText(new Date(time).toLocaleString(), {
+    x: width - 100,
+    y: height - forth * fontSize,
+    size: 8,
+    font: font,
+  })
+
+  let next = forth + 1
+
+  return next
+}
+
+function agentImage(page, font, image, imageScale, start, width, height, fontSize, time) {
+  let second = start + 2
+  let third = second + 1
+
+  page.drawText('Genesys', {
+    x: width - 70,
+    y: height - start * fontSize,
+    size: fontSize,
+    font: font,
+  })
+
+  page.drawImage(image, {
+    x: width - (image.scale(imageScale).width + 20),
+    y: height - third * fontSize - image.scale(imageScale).height,
+    width: image.scale(imageScale).width,
+    height: image.scale(imageScale).height,
+  })
+  let forth = third + image.scale(imageScale).height / fontSize + 1
+
+  page.drawText(new Date(time).toLocaleString(), {
+    x: width - 100,
     y: height - forth * fontSize,
     size: 8,
     font: font,
