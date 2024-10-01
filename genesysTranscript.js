@@ -5,15 +5,10 @@ let gc_token
 let gc_icon
 
 Genesys('subscribe', 'Launcher.ready', function () {
-  if (JSON.parse(localStorage.getItem(`_${gc_deploymentId}:actmu`))) {
-    gc_token = JSON.parse(localStorage.getItem(`_${gc_deploymentId}:actmu`)).value
+  Genesys('command', 'Identifiers.getAll', {}, function (data) {
+    gc_token = data.customerId
     displayButton()
-  } else {
-    setTimeout(function () {
-      gc_token = JSON.parse(localStorage.getItem(`_${gc_deploymentId}:actmu`)).value
-      displayButton()
-    }, 2000)
-  }
+  })
 })
 
 function setupWSS() {
